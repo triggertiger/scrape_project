@@ -1,0 +1,5 @@
+matplotlib==3.10.1
+python-dotenv==1.1.0
+scrapy==2.12.0
+seaborn==0.13.2
+yfinance==0.2.55

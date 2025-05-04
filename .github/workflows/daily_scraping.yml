@@ -2,7 +2,7 @@ name: daily scraping Brent Indexes
 
 on:
   schedule:
-  - cron: '*/15 * * * *'
+  - cron: '0 5 * * *'
   workflow_dispatch:
 
 env: 
@@ -31,7 +31,7 @@ jobs:
           git.config user.name "github-actions[bot]"  
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: run daily scrape:
+      - name: run daily scrape
         run: |
           python daily_scrape.py
       

@@ -162,7 +162,7 @@ class OilForwardValueCollector:
         else:
             # get data for last trading day: 
             data =  yf.download(self.ticker, period='1d', interval='1d')
-
+            print(f'data from yf.download oil futures: {data}')
         # rename columns to <value>_<ticker>; lower case only first letter:
         data.columns = data.columns.map(lambda col: ('_'.join(col)))
         data.rename(columns={f'Close_{self.ticker}': f'close_{self.ticker}'}, inplace=True)
@@ -200,6 +200,7 @@ class SentimentIndexCollector:
         else:
             # get data for last trading day: 
             data =  yf.download(self.ticker, period='1d', interval='1d')
+            print(f'data from yf.download vix sentiment: {data}')
 
         #rename df columns
         data.columns = data.columns.map(lambda col: '_'.join(col))

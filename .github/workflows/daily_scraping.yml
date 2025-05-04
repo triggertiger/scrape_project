@@ -6,8 +6,11 @@ on:
   workflow_dispatch:
 
 env: 
-  GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-  ALPHA_VANTAGE_API_KEY: ${{secrets.ALPHA_VANTAGE_API_KEY}}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  ALPHA_VANTAGE_API_KEY: ${{ secrets.ALPHA_VANTAGE_API_KEY }}
+
+permissions:
+  contents: write
 
 jobs:
   add_daily_scrape:

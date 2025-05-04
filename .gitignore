@@ -1,5 +1,5 @@
 .env
 notebooks/
 *.json
-*.txt
+learning_scrapy.txt
 *.xml

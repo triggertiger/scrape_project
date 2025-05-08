@@ -53,6 +53,9 @@ class VisualizeBrent:
         return self.figure
 
     def long_term_trend_generator(self, ytd=False):
+        """generates a figure with 3 subplots for daily, weekly and monthly values
+        of the examined indexes, through the entire time period"""
+
         self.figure, (ax1,ax2,ax3) = plt.subplots(nrows=3, figsize=(14, 12), sharex=True)
         self.figure.suptitle(f'Brent Crude and related indexes value development over 2Y,\n Normalized')
         
@@ -97,6 +100,7 @@ class VisualizeBrent:
 
     
     def heatmap_generator(self):
+        """generates a correlation heatmap for all indexes through the entire time period"""
         ax = sns.heatmap(self.combined_df.corr(), 
                          annot=True, 
                          cmap="crest", 
@@ -109,11 +113,13 @@ class VisualizeBrent:
         return self.figure
     
     def heatmap_volatility(self):
-        # std correlation:
-        returns = self.combined_df.pct_change()
+        """generates a heatmap for the volatility of each of the indexes, 
+        based on the std of the daily change, in relaton to the monthly-average"""
+        # daily changes
+        change = self.combined_df.pct_change()
 
         # Rolling volatility for each column
-        rolling_vol = returns.rolling(window=30).std()
+        rolling_vol = change.rolling(window=30).std()
 
         # Correlation of volatility between assets
         vol_corr = rolling_vol.corr()
@@ -128,12 +134,7 @@ class VisualizeBrent:
         plt.show()
         return self.figure
 
-    # def short_term_monthly_drawdown(self):
-    #     series = combined
-    #     roll_max = series.cummax()
-    #     drawdown = (series - roll_max) / roll_max
-
-    def recent_volatility(self):
+    def recent_volatility_brent(self):
         """get the recent volatility chart
         for each day in the past week, compared to the previous 20 days"""
         #  calculate daily % change
@@ -160,14 +161,45 @@ class VisualizeBrent:
         plt.title('Brent Crude Rolling Volatility: Daily % change in last 7 Days compared to 20 days window')
         plt.ylabel('Volatility: (std of value)')
         plt.xlabel('Date')
-
-        
-
         plt.show()
+
+    def recent_volatility_combined(self):
+        """get the recent volatility chart
+        for each day in the past week, compared to the previous 20 days"""
+        #  calculate daily % change
+        df = self.combined_df.sort_index()  
+        change = df.pct_change()
+
+        # claculate 20 days rolling average std for each day
+        rolling_vol = change.rolling(window=20).std()
+        print(rolling_vol)
+        # compare the last 7 days
+        recent_vol = change.dropna().iloc[-7:] * 100
+
+        # plot
+        fig, ax = plt.subplots( figsize=(14,8))#, layout='constrained')
+        
+        # give different colors
+        
+        for col, color, label in zip(recent_vol.columns, self.display_colors, self.display_labels):
+            ax.plot(recent_vol[col], color=color)
+
+            # position for ticker next to the last value
+            y_pos = recent_vol[col].iloc[-1] + 0.02
+            x_pos = recent_vol[col].index[-1]
+            ax.text(x=x_pos,y=y_pos,s= label, fontsize=12, color=color)
+        
+        # ax.fill_between(recent_vol.index, 
+        #                 recent_vol['rolling_volatility'], 
+        #                 recent_vol['rolling_volatility'].min(), color='m', alpha=0.1)
+
+        plt.title('Brent Crude Rolling Volatility: Daily % change in last 7 Days compared to 20 days window')
+        plt.ylabel('Volatility: (std of value)')
+        plt.xlabel('Date')
 
      
 
 visual = VisualizeBrent()
-plot = visual.recent_volatility()
+plot = visual.recent_volatility_combined()
 #visual.figure.show()
 plt.show()

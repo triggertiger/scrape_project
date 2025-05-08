@@ -151,6 +151,11 @@ class OilForwardValueCollector:
     
     def collect_values(self):
 
+        session = requests.Session()
+        session.headers.update({
+            'User-Agent': 'Mozilla/5.0'
+        })    
+
         if self.hist: 
             # set start date to 2 years past: 
             today = datetime.today().date()
@@ -161,8 +166,9 @@ class OilForwardValueCollector:
         
         else:
             # get data for last trading day: 
-            data =  yf.download(self.ticker, period='1d', interval='1d')
+            data =  yf.download(self.ticker, period='1d', session=session, interval='1d')
             print(f'data from yf.download oil futures: {data}')
+        
         # rename columns to <value>_<ticker>; lower case only first letter:
         data.columns = data.columns.map(lambda col: ('_'.join(col)))
         data.rename(columns={f'Close_{self.ticker}': f'close_{self.ticker}'}, inplace=True)
@@ -188,7 +194,11 @@ class SentimentIndexCollector:
         self.vix_df = None
     
     def collect_values(self):
-
+        
+        session = requests.Session()
+        session.headers.update({
+            'User-Agent': 'Mozilla/5.0'
+        }) 
         if self.hist: 
             # set start date to 2 years past: 
             today = datetime.today().date()
@@ -211,7 +221,7 @@ class SentimentIndexCollector:
         self.vix_df.index.name ='date'
         self.vix_df.sort_index(ascending=False, inplace=True)
 
-def scrape_factory(alpha_api_key, hist=False):
+def scrape_factory(alpha_api_key, hist=False)->list:
     """
     fetches all values for either historical or current.
     currently - joins all value to a dataframe. 
@@ -272,6 +282,7 @@ def save_to_hdf(df_dict, hist:bool):
                 print(f'data file for {key} already exists. cannot recreate, please collect current data only with "hist=False"')    
                 return
             store.put(key=key, value=df, format='table')
+            print(f'key {key}\n df: {df}')
         
     else:
         if os.path.exists(path):

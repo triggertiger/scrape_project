@@ -12,7 +12,7 @@ class VisualizeBrent:
         self.rolling_weekly = self.rolling_average()
         self.rolling_monthly = self.rolling_average(window=30)
         self.display_labels = ['BZ Futures', 'Brent Crude', 'EUR/USD', 'VIX Index']
-        self.display_colors = ['b', 'm', 'g', 'r']
+        self.display_colors = ['black', 'violet', 'mediumblue', 'lightseagreen']
         self.fig = None
     
     def combine_data(self):
@@ -39,7 +39,6 @@ class VisualizeBrent:
         
         
     def rolling_average(self, window=7, normalized=True):
-        print(f'normalized from within the rolling average: {self.normalized_df}')
         if normalized:    
             rolling = self.normalized_df.rolling(window=window).mean()
         else:
@@ -172,9 +171,9 @@ class VisualizeBrent:
 
         # claculate 20 days rolling average std for each day
         rolling_vol = change.rolling(window=20).std()
-        print(rolling_vol)
+        
         # compare the last 7 days
-        recent_vol = change.dropna().iloc[-7:] * 100
+        recent_vol = rolling_vol.dropna().iloc[-7:] * 100
 
         # plot
         fig, ax = plt.subplots( figsize=(14,8))#, layout='constrained')
@@ -193,13 +192,14 @@ class VisualizeBrent:
         #                 recent_vol['rolling_volatility'], 
         #                 recent_vol['rolling_volatility'].min(), color='m', alpha=0.1)
 
-        plt.title('Brent Crude Rolling Volatility: Daily % change in last 7 Days compared to 20 days window')
-        plt.ylabel('Volatility: (std of value)')
+        plt.title('Indexes Rolling Volatility: Daily % change in last 7 Days compared to 20 days window')
+        plt.ylabel('Volatility: (std of value), in %')
         plt.xlabel('Date')
 
      
 
 visual = VisualizeBrent()
+print(visual.df_list[0].head(10))
 plot = visual.recent_volatility_combined()
 #visual.figure.show()
 plt.show()

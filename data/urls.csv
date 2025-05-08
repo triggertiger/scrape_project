@@ -1,0 +1,4 @@
+ECB,https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/usd.xml
+AV_BRENT_function,https://www.alphavantage.co/query?function=BRENT&interval=daily&apikey=
+yfinance_BZ_FUTURES,BZ=F
+yfinance_VIX,^VIX

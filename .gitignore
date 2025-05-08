@@ -3,4 +3,4 @@ notebooks/
 *.json
 learning_scrapy.txt
 *.xml
-*/__pycache__/
+*/__pycache__*

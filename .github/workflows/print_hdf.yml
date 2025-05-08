@@ -1,4 +1,4 @@
-name: daily scraping Brent Indexes
+name: check upload
 
 on:
   push

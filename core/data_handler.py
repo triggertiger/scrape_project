@@ -121,8 +121,6 @@ class BrentPriceCollector:
             # sort out last 2 years
             self.brent_df = brent_df.loc[brent_df.index >= self.start_date]
             
-            # convert to float, handle non-numeric as 'NaN'
-            self.brent_df['brent_value'] = pd.to_numeric(self.brent_df['brent_value'], errors='coerce')
         else: 
             last_day_value = self.brent_raw_data[0]
             value = float(last_day_value['value'])
@@ -132,8 +130,11 @@ class BrentPriceCollector:
                 index=[date]  
             )
             
+        # convert to float, handle non-numeric as 'NaN'
+        self.brent_df['brent_value'] = pd.to_numeric(self.brent_df['brent_value'], errors='coerce')
         self.brent_df.set_index('date', inplace=True)
         self.brent_df.index = pd.to_datetime(self.brent_df.index)
+
 
 class OilForwardValueCollector:
     """

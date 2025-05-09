@@ -77,7 +77,10 @@ class CurrencyCollector:
         self.currency_df.index = pd.to_datetime(self.currency_df.index)
         self.currency_df.sort_index(ascending=False, inplace=True)
         self.currency_df.rename(columns={'value': 'usd_value'}, inplace=True)
+        self.currency_df['usd_value'] = pd.to_numeric(self.currency_df['usd_value'], errors='coerce')
 
+        print(f'currency dataframe {self.currency_df}')
+        print(f'currency types {self.currency_df.dtypes}')
 
 
 class BrentPriceCollector:
@@ -134,7 +137,8 @@ class BrentPriceCollector:
         self.brent_df['brent_value'] = pd.to_numeric(self.brent_df['brent_value'], errors='coerce')
         self.brent_df.set_index('date', inplace=True)
         self.brent_df.index = pd.to_datetime(self.brent_df.index)
-
+        print(f'brent dataframe {self.brent_df}')
+        print(f'brent types {self.brent_df.dtypes}')
 
 class OilForwardValueCollector:
     """
@@ -176,7 +180,8 @@ class OilForwardValueCollector:
         self.oil_future_df = data[[f'close_{self.ticker}']]
         self.oil_future_df.index.name ='date'
         self.oil_future_df.sort_index(ascending=False, inplace=True)
-
+        print(f'oil future df: {self.oil_future_df}')
+        print(f'oil future df types: {self.oil_future_df.dtypes}')
 
 
 class SentimentIndexCollector:
@@ -221,6 +226,9 @@ class SentimentIndexCollector:
         self.vix_df = data[[f'close_{self.ticker}']]
         self.vix_df.index.name ='date'
         self.vix_df.sort_index(ascending=False, inplace=True)
+        print(f'vix df: {self.vix_df}')
+        print(f'vix df types: {self.vix_df.dtypes}')
+
 
 def scrape_factory(alpha_api_key, hist=False)->list:
     """
@@ -307,7 +315,7 @@ def load_from_hdf(path='./data/oil_market_data.h5'):
     with pd.HDFStore(path, mode='r') as store: 
         for key in store.keys():
             df = store[key]
-            df.index.drop_duplicates(keep='first')
+            df = df[~df.index.duplicated(keep='first')]
             #df = df.convert_dtypes(convert_floating=True)
             df_list.append(df)
     

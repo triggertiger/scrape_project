@@ -27,7 +27,7 @@ class VisualizeBrent:
         combined_df.ffill(inplace=True)
         combined_df.bfill(inplace=True)
         combined_df.sort_index(ascending=True, inplace=True)
-
+        combined_df = combined_df[~combined_df.index.duplicated(keep='first')]
         return combined_df
     
     def normalize_dfs(self, factor=100):
@@ -199,7 +199,7 @@ class VisualizeBrent:
      
 
 visual = VisualizeBrent()
-print(visual.df_list[0].head(10))
+print(visual.combined_df.tail(20))
 plot = visual.recent_volatility_combined()
 #visual.figure.show()
 plt.show()

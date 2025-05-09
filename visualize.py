@@ -66,7 +66,7 @@ class VisualizeBrent:
         ax2.set_title('Weekly Rolling Average')
         ax3.set_title('Monthly Rolling Average')
         
-        if ytd:
+        if not ytd:
             
             df1 = self.normalized_df
             df2 = self.rolling_weekly
@@ -94,7 +94,6 @@ class VisualizeBrent:
                    loc='upper right',
                    shadow=True)
         plt.show()
-        #self.figure = fig
         return self.figure
 
     
@@ -129,7 +128,7 @@ class VisualizeBrent:
                          xticklabels=self.display_labels,
                          yticklabels=self.display_labels)
         plt.yticks(rotation=0) 
-        plt.title('Indexes Correlation Heatmap')
+        plt.title('Volatility Correlation Heatmap')
         plt.show()
         return self.figure
 
@@ -151,11 +150,11 @@ class VisualizeBrent:
         # position for ticker next to the last value
         y_pos = recent_vol.iloc[-1] + 0.02
         x_pos = recent_vol.index[-1]
-        ax.text(x=x_pos,y=y_pos,s='Brent Crude', fontsize=12, color='m')
+        ax.text(x=x_pos,y=y_pos,s='Brent Crude', fontsize=12, color='violet', weight='bold')
         ax.plot(recent_vol, color='m')
         ax.fill_between(recent_vol.index, 
                         recent_vol['rolling_volatility'], 
-                        recent_vol['rolling_volatility'].min(), color='m', alpha=0.1)
+                        recent_vol['rolling_volatility'].min(), color='violet', alpha=0.1)
 
         plt.title('Brent Crude Rolling Volatility: Daily % change in last 7 Days compared to 20 days window')
         plt.ylabel('Volatility: (std of value)')
@@ -167,39 +166,38 @@ class VisualizeBrent:
         for each day in the past week, compared to the previous 20 days"""
         #  calculate daily % change
         df = self.combined_df.sort_index()  
+        print(f'original df: \n{df.tail(10)}')
         change = df.pct_change()
-
+        print(f'percent change: \n{change.tail(10)}')
         # claculate 20 days rolling average std for each day
         rolling_vol = change.rolling(window=20).std()
-        
+        print(f'rolling volatility 20 days: \n{rolling_vol.tail(10)}')
         # compare the last 7 days
         recent_vol = rolling_vol.dropna().iloc[-7:] * 100
+        print(f'only for the last 7 points: {recent_vol}')
 
         # plot
         fig, ax = plt.subplots( figsize=(14,8))#, layout='constrained')
         
         # give different colors
-        
+        x_location = 1
         for col, color, label in zip(recent_vol.columns, self.display_colors, self.display_labels):
             ax.plot(recent_vol[col], color=color)
 
             # position for ticker next to the last value
-            y_pos = recent_vol[col].iloc[-1] + 0.02
-            x_pos = recent_vol[col].index[-1]
-            ax.text(x=x_pos,y=y_pos,s= label, fontsize=12, color=color)
-        
-        # ax.fill_between(recent_vol.index, 
-        #                 recent_vol['rolling_volatility'], 
-        #                 recent_vol['rolling_volatility'].min(), color='m', alpha=0.1)
-
-        plt.title('Indexes Rolling Volatility: Daily % change in last 7 Days compared to 20 days window')
+            y_pos = recent_vol[col].iloc[- x_location]
+            x_pos = recent_vol[col].index[ - x_location] 
+            x_location += 1
+            ax.text(x=x_pos,y=y_pos,s= label, fontsize=10, color=color, weight='bold')
+            
+        plt.legend(ax.get_legend_handles_labels(), 
+                   labels=self.display_labels, 
+                   loc='upper right',
+                   shadow=True)        
+        plt.title('Indexes Rolling Volatility: Daily % change in last 7 Days compared to 20 days window', weight='bold')
         plt.ylabel('Volatility: (std of value), in %')
-        plt.xlabel('Date')
-
-     
+        plt.xlabel('Date')   
 
 visual = VisualizeBrent()
-print(visual.combined_df.tail(20))
 plot = visual.recent_volatility_combined()
-#visual.figure.show()
 plt.show()

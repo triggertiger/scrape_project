@@ -1,8 +1,8 @@
 name: daily scraping Brent Indexes
 
 on:
-  schedule:
-  - cron: '0 5 * * *'
+#  schedule:
+#  - cron: '0 5 * * *'
   workflow_dispatch:
 
 env: 
